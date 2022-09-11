@@ -28,7 +28,6 @@ app.get('/api/get-room', function (request, response) {
 
 app.listen(3000);
 
-
 const wss = new Server({port: 8000});
 
 wss.on('connection', (ws, req) => {
@@ -63,8 +62,16 @@ wss.on('connection', (ws, req) => {
         }
 
         if (type === 'accept') {
+            
             const amount = roomEstimateEvents[roomId].length;
-            const sum = roomEstimateEvents[roomId].reduce((p, c) => p.estimate + c.estimate);
+            
+            if (amount === 0) {
+                return;
+            }
+            
+            let sum = 0;
+            roomEstimateEvents[roomId].forEach((el) => sum += el.estimate);
+
             const finalEstimate = sum / amount;
 
             for (const id in clients) {
